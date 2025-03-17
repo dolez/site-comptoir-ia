@@ -2,8 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  h1, h2, h3, h4, h5, h6 {
+:root {
+  --font-league-spartan: 'League Spartan', sans-serif;
+}
+
+@layer base {   
+  body {
+    @apply font-league-spartan;
+    font-weight: 300;
+  }
+  h1 {
+    @apply lg:text-7xl text-5xl font-extrabold font-league-spartan;
+  }
+  h2 {
+    @apply text-4xl font-extrabold mb-12;
+  }
+  h3 {
+    @apply text-xl font-bold;
+  }
+  h4, h5, h6 {
     @apply font-display;
   }
   
@@ -83,4 +100,22 @@
 /* Focus styles for keyboard navigation */
 :focus-visible {
   @apply outline-none ring-2 ring-primary-500 dark:ring-primary-400;
+}
+.gradient1 {
+  @apply bg-gradient1 bg-clip-text text-transparent;
+}
+.prettify b:nth-of-type(1) {
+  @apply text-[#FFA950];
+}
+.prettify b:nth-of-type(2) {
+  @apply text-[#FF51A5];
+}
+.prettify b:nth-of-type(3) {
+  @apply text-[#AB3FF8];
+}
+.prettify b:nth-of-type(4) {
+  @apply text-[#24B6C6];
+}
+.prettify b:nth-of-type(5) {
+  @apply text-[#14D793];
 }
