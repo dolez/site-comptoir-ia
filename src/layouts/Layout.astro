@@ -57,6 +57,13 @@ const {
           analytics_storage: 'denied',
         });
         window.gtag('config', 'G-ZZ49BFDJQJ');
+
+        // Track page view on navigation
+        const currentPath = window.location.pathname;
+        window.gtag('event', 'page_view', {
+          page_path: currentPath,
+          page_title: document.title
+        });
       });
     </script>
   
@@ -110,7 +117,6 @@ const {
         }
       });
     </script>
-    <script type="module" src="/src/scripts/cookieconsent-config.js"></script>
     <script src="../scripts/transitions.js"></script>
   </body>
 </html>
