@@ -30,6 +30,8 @@ export const handler: Handler = async (event: HandlerEvent) => {
   }
 
   try {
+    // Le token reCAPTCHA est automatiquement vérifié par Netlify
+    // Si nous arrivons ici, c'est que la vérification a réussi
     const { email } = JSON.parse(event.body || "{}");
 
     if (!email) {

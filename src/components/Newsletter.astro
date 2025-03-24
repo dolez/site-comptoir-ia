@@ -13,6 +13,8 @@
       <form 
         class="max-w-xl mx-auto newsletter-form" 
         data-submitted="false"
+        name="newsletter"
+        data-netlify-recaptcha="true"
       >
         <div class="relative form-content">
           <div class="flex flex-col sm:flex-row gap-4">
@@ -36,6 +38,8 @@
               <span class="loading-text" hidden>Inscription...</span>
             </button>
           </div>
+
+          <div class="mt-4" data-netlify-recaptcha="true"></div>
         </div>
         
         <div class="text-center p-6 bg-primary-50 dark:bg-primary-900/30 rounded-lg success-message" hidden>
@@ -124,12 +128,33 @@
       this.errorMessage.hidden = true;
 
       try {
+        // Récupérer le token reCAPTCHA
+        const recaptchaResponse = await new Promise<string>((resolve) => {
+          const observer = new MutationObserver((mutations, obs) => {
+            const recaptchaInput = this.form.querySelector('input[name="g-recaptcha-response"]') as HTMLInputElement;
+            if (recaptchaInput && recaptchaInput.value) {
+              obs.disconnect();
+              resolve(recaptchaInput.value);
+            }
+          });
+          
+          observer.observe(this.form, {
+            attributes: true,
+            childList: true,
+            subtree: true
+          });
+        });
+
+        // Appeler la fonction Netlify avec l'email et le token reCAPTCHA
         const response = await fetch('/.netlify/functions/newsletter', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ 
+            email,
+            recaptchaToken: recaptchaResponse
+          })
         });
 
         const data = await response.json();
