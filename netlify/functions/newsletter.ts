@@ -1,5 +1,9 @@
-import { Handler, HandlerEvent } from "@netlify/functions";
+import type { Handler, HandlerEvent } from "@netlify/functions";
 import fetch from "node-fetch";
+
+type BrevoErrorResponse = {
+  message?: string;
+};
 
 export const handler: Handler = async (event: HandlerEvent) => {
   // Enable CORS
@@ -49,7 +53,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
       }),
     });
 
-    const data = await response.json();
+    const data = (await response.json()) as BrevoErrorResponse;
 
     if (!response.ok) {
       console.error("Brevo API error:", data);
