@@ -1,0 +1,27 @@
+---
+import 'vanilla-cookieconsent/dist/cookieconsent.css';
+
+interface Props {
+  buttonClass?: string;
+}
+
+const { buttonClass = "text-gray-400 hover:text-primary-400 text-sm transition-colors" } = Astro.props;
+---
+
+<button 
+  type="button" 
+  class={buttonClass}
+  data-cc="show-preferencesModal"
+>
+  Gérer les cookies
+</button>
+
+<script>
+  import { run } from 'vanilla-cookieconsent';
+  import { config } from './CookieConsentConfig';
+
+  // Initialize cookie consent on page load
+  document.addEventListener('astro:page-load', () => {
+    run(config);
+  });
+</script>

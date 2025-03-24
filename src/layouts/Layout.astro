@@ -10,7 +10,7 @@ export interface Props {
 
 const { 
   title, 
-  description = "Modern SaaS landing page template with responsive design and modular sections."
+  description = "Le Comptoir de l'IA - Solutions d'IA pour entreprises françaises"
 } = Astro.props;
 ---
 
@@ -26,11 +26,60 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=League+Spartan:wght@400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script is:inline src="https://www.googletagmanager.com/gtag/js?id=G-ZZ49BFDJQJ"></script>
+    <script>
+      // We need a global definition to avoid type warnings
+      declare global {
+        interface Window {
+          dataLayer: Record<string, any>[];
+          gtag: (...args: any[]) => void;
+        }
+      }
+      document.addEventListener('astro:page-load', () => {
+        // Initialize dataLayer
+        window.dataLayer = window.dataLayer || [];
+    
+        // Define gtag function
+        window.gtag = function gtag(...args: any[]) {
+          window.dataLayer.push(arguments);
+        };
+    
+        // Load GA4 with denied default consents
+        window.gtag('js', new Date());
+        window.gtag('consent', 'default', {
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          analytics_storage: 'denied',
+        });
+        window.gtag('config', 'G-ZZ49BFDJQJ');
+      });
+    </script>
+  
     <ViewTransitions />
   </head>
   <body class="antialiased bg-white dark:bg-secondary-950 text-secondary-900 dark:text-secondary-100 transition-colors duration-300">
     <div id="page-wrapper" class="page-transition-wrapper">
       <slot />
+    </div>
+    <div transition:persist="find-me-on-the-other-side" id="cc-container">
+      <script is:inline>
+        // Restore the `show--consent` class if it was present before the page swap
+        document.addEventListener('astro:before-preparation', (event) => {
+          const htmlClassName = window.document.documentElement.className;
+          const consentClassPresent = htmlClassName.includes('show--consent') ? true : false;
+          window._showConsentClass = consentClassPresent;
+        });
+  
+        document.addEventListener('astro:before-swap', (event) => {
+          const showConsent = window._showConsentClass ? ` show--consent` : '';
+          event.newDocument.documentElement.className += showConsent;
+        });
+      </script>
     </div>
     <script>
       // Check for user preference
@@ -61,6 +110,7 @@ const {
         }
       });
     </script>
+    <script type="module" src="/src/scripts/cookieconsent-config.js"></script>
     <script src="../scripts/transitions.js"></script>
   </body>
 </html>
