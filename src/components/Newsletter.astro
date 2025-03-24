@@ -11,45 +11,28 @@
       </div>
       
       <form 
-        class="max-w-xl mx-auto newsletter-form" 
-        data-submitted="false"
-        name="newsletter"
-        data-netlify-recaptcha="true"
+        name="newsletter" 
+        netlify
+        class="max-w-xl mx-auto newsletter-form"
       >
-        <div class="relative form-content">
-          <div class="flex flex-col sm:flex-row gap-4">
-            <div class="flex-grow">
-              <label for="email" class="sr-only">Adresse email</label>
-              <input 
-                type="email" 
-                id="email"
-                name="email"
-                placeholder="Votre email" 
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
-                required
-              />
-              <p class="text-red-500 text-sm mt-1 error-message" hidden></p>
-            </div>
-            <button 
-              type="submit" 
-              class="btn-primary whitespace-nowrap submit-button"
-            >
-              <span class="default-text">M'inscrire</span>
-              <span class="loading-text" hidden>Inscription...</span>
-            </button>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex-grow">
+            <label for="email" class="sr-only">Adresse email</label>
+            <input 
+              type="email" 
+              id="email"
+              name="email"
+              placeholder="Votre email" 
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+              required
+            />
           </div>
-
-          <div class="mt-4" data-netlify-recaptcha="true"></div>
-        </div>
-        
-        <div class="text-center p-6 bg-primary-50 dark:bg-primary-900/30 rounded-lg success-message" hidden>
-          <svg class="w-12 h-12 text-primary-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Merci de votre inscription !</h3>
-          <p class="text-gray-600 dark:text-gray-300">
-            Vous recevrez bientôt mes dernières actualités et conseils.
-          </p>
+          <button 
+            type="submit" 
+            class="btn-primary whitespace-nowrap submit-button"
+          >
+            M'inscrire
+          </button>
         </div>
       </form>
       
@@ -61,114 +44,20 @@
 </section>
 
 <script>
+  // La fonction Netlify pour Brevo sera toujours appelée côté serveur
   class NewsletterForm {
     form: HTMLFormElement;
-    errorMessage: HTMLElement;
-    submitButton: HTMLButtonElement;
-    defaultText: HTMLElement;
-    loadingText: HTMLElement;
-    formContent: HTMLElement;
-    successMessage: HTMLElement;
 
     constructor(form: HTMLFormElement) {
       this.form = form;
-      this.errorMessage = form.querySelector('.error-message')!;
-      this.submitButton = form.querySelector('.submit-button')!;
-      this.defaultText = form.querySelector('.default-text')!;
-      this.loadingText = form.querySelector('.loading-text')!;
-      this.formContent = form.querySelector('.form-content')!;
-      this.successMessage = form.querySelector('.success-message')!;
-
       this.init();
     }
 
     init() {
-      this.form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await this.handleSubmit();
+      this.form.addEventListener('submit', (e) => {
+        // Laisser Netlify gérer la soumission
+        // La fonction serverless sera appelée via le webhook Netlify Forms
       });
-    }
-
-    setLoading(loading: boolean) {
-      this.submitButton.disabled = loading;
-      this.defaultText.hidden = loading;
-      this.loadingText.hidden = !loading;
-    }
-
-    showError(message: string) {
-      this.errorMessage.textContent = message;
-      this.errorMessage.hidden = false;
-    }
-
-    showSuccess() {
-      this.formContent.hidden = true;
-      this.successMessage.hidden = false;
-      this.form.dataset.submitted = 'true';
-    }
-
-    validateEmail(email: string): boolean {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    async handleSubmit() {
-      const formData = new FormData(this.form);
-      const email = formData.get('email') as string;
-
-      if (!email) {
-        this.showError('Veuillez entrer votre email');
-        return;
-      }
-
-      if (!this.validateEmail(email)) {
-        this.showError('Veuillez entrer un email valide');
-        return;
-      }
-
-      this.setLoading(true);
-      this.errorMessage.hidden = true;
-
-      try {
-        // Récupérer le token reCAPTCHA
-        const recaptchaResponse = await new Promise<string>((resolve) => {
-          const observer = new MutationObserver((mutations, obs) => {
-            const recaptchaInput = this.form.querySelector('input[name="g-recaptcha-response"]') as HTMLInputElement;
-            if (recaptchaInput && recaptchaInput.value) {
-              obs.disconnect();
-              resolve(recaptchaInput.value);
-            }
-          });
-          
-          observer.observe(this.form, {
-            attributes: true,
-            childList: true,
-            subtree: true
-          });
-        });
-
-        // Appeler la fonction Netlify avec l'email et le token reCAPTCHA
-        const response = await fetch('/.netlify/functions/newsletter', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            email,
-            recaptchaToken: recaptchaResponse
-          })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Une erreur est survenue');
-        }
-
-        this.showSuccess();
-      } catch (err) {
-        this.showError((err as Error).message || 'Une erreur est survenue lors de l\'inscription');
-      } finally {
-        this.setLoading(false);
-      }
     }
   }
 

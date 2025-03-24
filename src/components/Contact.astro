@@ -83,37 +83,17 @@
         <div class="card p-6 border border-gray-200 dark:border-gray-700">
           <h3 class="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Envoyez-nous un message</h3>
           
-          <form 
-            name="contact"
-            method="POST"
-            data-netlify="true"
-            data-netlify-recaptcha="true"
-            x-data="{ name: '', email: '', message: '', submitted: false, errors: {} }"
-            @submit.prevent="
-              errors = {};
-              if (!name) errors.name = 'Veuillez saisir votre nom';
-              if (!email) errors.email = 'Veuillez saisir votre email';
-              else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Veuillez saisir un email valide';
-              if (!message) errors.message = 'Veuillez saisir votre message';
-              
-              if (Object.keys(errors).length === 0) {
-                $event.target.submit();
-              }
-            "
-          >
-            <input type="hidden" name="form-name" value="contact" />
-            
+          <form name="contact" netlify>
             <div class="mb-4">
               <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom</label>
               <input 
                 type="text" 
                 id="name"
                 name="name" 
-                x-model="name"
                 class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
                 placeholder="Votre nom"
+                required
               />
-              <p class="text-red-500 text-sm mt-1" x-show="errors.name" x-text="errors.name"></p>
             </div>
             
             <div class="mb-4">
@@ -122,11 +102,10 @@
                 type="email" 
                 id="contact-email"
                 name="email" 
-                x-model="email"
                 class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
                 placeholder="Votre email"
+                required
               />
-              <p class="text-red-500 text-sm mt-1" x-show="errors.email" x-text="errors.email"></p>
             </div>
             
             <div class="mb-6">
@@ -134,24 +113,19 @@
               <textarea 
                 id="message"
                 name="message" 
-                x-model="message"
                 rows="5" 
                 class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
                 placeholder="Votre message"
+                required
               ></textarea>
-              <p class="text-red-500 text-sm mt-1" x-show="errors.message" x-text="errors.message"></p>
             </div>
-
-            <div class="mb-6" data-netlify-recaptcha="true"></div>
             
-            <div x-show="!submitted">
-              <button 
-                type="submit" 
-                class="w-full btn-primary"
-              >
-                Envoyer le message
-              </button>
-            </div>
+            <button 
+              type="submit" 
+              class="w-full btn-primary"
+            >
+              Envoyer le message
+            </button>
           </form>
 
           <div class="text-center p-6 bg-primary-50 dark:bg-primary-900/30 rounded-lg" x-show="submitted" x-cloak>
