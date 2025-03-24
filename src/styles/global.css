@@ -104,6 +104,12 @@
 .gradient1 {
   @apply bg-gradient1 bg-clip-text text-transparent;
 }
+.gradient2 {
+  @apply bg-gradient2 bg-clip-text text-transparent;
+}
+.gradient3 {
+  @apply bg-gradient3 bg-clip-text text-transparent;
+}
 .prettify b:nth-of-type(1) {
   @apply text-[#FFA950];
 }

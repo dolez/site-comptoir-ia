@@ -1,18 +1,24 @@
 ---
+import { Image } from 'astro:assets';
+import mistralLogo from '../assets/logos/mistral.png';
+import scalewayLogo from '../assets/logos/scaleway.png';
+import huggingfaceLogo from '../assets/logos/huggingface.png';
+import ovhLogo from '../assets/logos/ovh.png';
 ---
-<section class="relative pt-32 pb-20 md:pt-40 overflow-hidden hero-section">
-  <div class="container-custom relative z-10">
-    <div class="grid md:grid-cols-2 gap-12 items-center">
+<section class="relative pt-32 md:pt-20 mb-0 overflow-hidden hero-section">
+  <div class="relative z-10">
+    <div id="animated-element" class="absolute top-0 left-0 w-full h-full"></div>
+    <div class="container-custom grid md:grid-cols-2 gap-12 items-center pb-20">
       <div class="slide-up" transition:animate="slide">
-        <h1 class="mb-6">
+        <h1 class="my-24">
           Bienvenue au
           <br />
           <span class="gradient1">Comptoir de l'IA</span>
         </h1>
         <p class="py-6 text-2xl prettify">
-          Je développe des <b>solutions d'IA</b> accessibles,<br/> <b>efficaces</b> et respectueuses de <b>vos équipes</b> pour <br/> <b>propulser votre entreprise</b> 🚀
+          Je développe des <b>solutions d'IA</b> accessibles,<br/> <b>efficaces</b> et respectueuses de <b>vos valeurs</b> pour <br/> <b>propulser votre entreprise</b> 🚀
         </p>
-        <div class="flex flex-wrap gap-4">
+        <div class="flex flex-wrap gap-4 my-10">
           <a href="/contact" class="btn-primary">
             Suivre l'aventure
           </a>
@@ -25,17 +31,12 @@
         </div>
       </div>
       
-      <div class="relative fade-in" transition:animate="fade">
-        <!-- Animated Elephant SVG Hero Image -->
-        <div class="w-full max-w-lg mx-auto">
-
-        </div>
-      </div>
+      
     </div>
   </div>
   
   <!-- Teal section at the bottom with Trusted By -->
-  <div class="mt-10 w-full overflow-hidden -z-10" transition:animate="slide">
+  <div class="w-full overflow-hidden -z-10" transition:animate="slide">
     <div class="relative bg-teal-400 dark:bg-teal-500 py-12 md:py-16">
       <div class="container-custom">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -52,16 +53,16 @@
             <p class="text-sm uppercase tracking-wider text-teal-800 dark:text-teal-800 font-medium mb-4">Pensé en France, pour la France</p>
             <div class="flex flex-wrap justify-start md:justify-end gap-x-8 gap-y-4">
               <div class="h-8 flex items-center">
-                <span class="text-black dark:text-black font-medium">Mistral-AI</span>
+                <Image src={mistralLogo} alt="Mistral AI" class="h-12 w-auto" />
               </div>
               <div class="h-8 flex items-center">
-                <span class="text-black dark:text-black font-medium">Scaleway</span>
+                <Image src={scalewayLogo} alt="Scaleway" class="h-12 w-auto" />
               </div>
               <div class="h-8 flex items-center">
-                <span class="text-black dark:text-black font-medium">Huggingface</span>
+                <Image src={huggingfaceLogo} alt="Hugging Face" class="h-12 w-auto" />
               </div>
               <div class="h-8 flex items-center">
-                <span class="text-black dark:text-black font-medium">OVHcloud</span>
+                <Image src={ovhLogo} alt="OVHcloud" class="h-12 w-auto" />
               </div>
             </div>
           </div>
@@ -84,3 +85,85 @@
     animation: float 6s ease-in-out infinite;
   }
 </style>
+
+<script>
+  // Declare types
+  declare const VANTA: {
+    GLOBE: (config: any) => any;
+  };
+  declare const THREE: any;
+
+  let vantaEffect: any = null;
+
+  const initVanta = () => {
+    // Check if both VANTA and THREE are defined
+    if (typeof VANTA !== 'undefined' && typeof THREE !== 'undefined') {
+      const element = document.querySelector('#animated-element');
+      if (element && !vantaEffect) {
+        try {
+          const isDarkMode = document.documentElement.classList.contains('dark');
+          vantaEffect = VANTA.GLOBE({
+            el: element,
+            THREE: THREE, // Pass THREE explicitly
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x3b82f6,
+            color2: 0x14b8a6,
+            backgroundColor: isDarkMode ? 0x111827 : 0xffffff
+          });
+
+          // Watch for dark mode changes
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              if (mutation.attributeName === 'class' && vantaEffect) {
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                vantaEffect.setOptions({
+                  backgroundColor: isDarkMode ? 0x111827 : 0xffffff
+                });
+              }
+            });
+          });
+
+          observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+          });
+        } catch (error) {
+          console.error('Error initializing VANTA:', error);
+        }
+      }
+    } else {
+      // Retry after a short delay if libraries aren't loaded yet
+      setTimeout(initVanta, 100);
+    }
+  };
+
+  // Initialize on page load
+  document.addEventListener('astro:page-load', () => {
+    if (vantaEffect) {
+      vantaEffect.destroy();
+    }
+    initVanta();
+  });
+
+  // Cleanup before page transitions
+  document.addEventListener('astro:before-swap', () => {
+    if (vantaEffect) {
+      vantaEffect.destroy();
+      vantaEffect = null;
+    }
+  });
+
+  // Cleanup on window unload as fallback
+  window.addEventListener('unload', () => {
+    if (vantaEffect) {
+      vantaEffect.destroy();
+      vantaEffect = null;
+    }
+  });
+</script>

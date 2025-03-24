@@ -1,0 +1,65 @@
+---
+const products = [
+  {
+    id: "prospector",
+    title: "Prospector",
+    subtitle: "Votre assistant de prospection intelligent",
+    features: [
+      "Construction et qualification de prospects",
+      "Automatisation d'emails personnalisés",
+      "Suivi et optimisation des conversions"
+    ],
+    description: "Je l'utilise quotidiennement pour ma propre croissance et j'améliore chaque fonctionnalité en conditions réelles"
+  },
+  {
+    id: "bob",
+    title: "Bob",
+    subtitle: "Votre expert en intégration d'IA",
+    features: [
+      "Veille technologique permanente",
+      "Recommandations personnalisées",
+      "Assistance à l'implémentation"
+    ],
+    description: "Conçu pour répondre à mes propres défis d'intégration d'IA dans les entreprises françaises"
+  }
+];
+---
+
+<section class="section bg-gray-50 dark:bg-gray-800/50">
+  <div class="container-custom">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="mb-6 gradient2">Les solutions en développement</h2>
+    </div>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      {products.map((product, index) => (
+        <div class="slide-up" style={`animation-delay: ${index * 150}ms`}>
+          <div class="card p-8 h-full border border-gray-200 dark:border-gray-700">
+            <h3 class="text-2xl font-semibold mb-2 text-gray-900 dark:text-white">{product.title}</h3>
+            <p class="text-lg text-primary-600 dark:text-primary-400 mb-6">{product.subtitle}</p>
+            
+            <ul class="space-y-4 mb-8">
+              {product.features.map(feature => (
+                <li class="flex items-start">
+                  <svg class="w-5 h-5 text-primary-500 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span class="text-gray-600 dark:text-gray-300">{feature}</span>
+                </li>
+              ))}
+            </ul>
+            
+            <p class="text-gray-600 dark:text-gray-300 mb-8">{product.description}</p>
+            
+            <a href={`/products/${product.id}`} class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:underline">
+              Suivre le développement
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section> 
