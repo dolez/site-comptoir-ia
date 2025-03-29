@@ -8,7 +8,7 @@ interface Props {
 const { class: className, delay = 0, direction = 'left' } = Astro.props;
 ---
 
-<div class:list={["slide-in", className]} style={`--delay: ${delay}ms; --direction: ${direction === 'left' ? '-100%' : '100%'};`}>
+<div class:list={["slide-in", className]} style={`--delay: ${delay}ms; --direction: ${direction === 'left' ? '-50px' : '50px'};`}>
   <slot />
 </div>
 
@@ -36,7 +36,9 @@ const { class: className, delay = 0, direction = 'left' } = Astro.props;
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
+      console.log(entry);
       if (entry.isIntersecting) {
+        console.log('visible');
         entry.target.classList.add('visible');
         observer.unobserve(entry.target);
       }
