@@ -28,22 +28,34 @@ const { class: className, delay = 0, distance = 40 } = Astro.props;
 </style>
 
 <script>
-  const observerOptions = {
-    root: null,
-    rootMargin: '-50px',
-    threshold: 0.2
-  };
+  let observer: IntersectionObserver;
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
+  function initializeObserver() {
+    const observerOptions = {
+      root: null,
+      rootMargin: '-50px',
+      threshold: 0.2
+    };
+
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach((element) => {
+      observer.observe(element);
     });
-  }, observerOptions);
+  }
 
-  document.querySelectorAll('.fade-in').forEach((element) => {
-    observer.observe(element);
+  // Initialize on first load
+  initializeObserver();
+
+  // Re-initialize after navigation
+  document.addEventListener('astro:page-load', () => {
+    initializeObserver();
   });
 </script> 
