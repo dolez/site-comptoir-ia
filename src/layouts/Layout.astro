@@ -1,8 +1,6 @@
 ---
 import '../styles/global.css';
-import '../styles/transitions.css';
-import { ViewTransitions } from 'astro:transitions';
-
+import { ClientRouter } from "astro:transitions";
 export interface Props {
   title: string;
   description?: string;
@@ -15,7 +13,7 @@ const {
 ---
 
 <!doctype html>
-<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" :class="{ 'dark': darkMode }">
+<html lang="en"  transition:name="root" transition:animate="none">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -67,7 +65,7 @@ const {
       });
     </script>
   
-    <ViewTransitions />
+    <ClientRouter />
   </head>
   <body class="antialiased bg-white dark:bg-secondary-950 text-secondary-900 dark:text-secondary-100 transition-colors duration-300">
     <div id="page-wrapper" class="page-transition-wrapper">
@@ -75,48 +73,92 @@ const {
     </div>
     <div transition:persist="find-me-on-the-other-side" id="cc-container">
       <script is:inline>
-        // Restore the `show--consent` class if it was present before the page swap
+        // Theme management
+        const getTheme = () => {
+          const localStorageTheme = localStorage?.getItem("theme") ?? '';
+          if (['dark', 'light'].includes(localStorageTheme)) {
+            return localStorageTheme;
+          }
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+          }
+          return 'light';
+        };
+
+        const applyTheme = (element) => {
+          const theme = getTheme();
+          if (theme === 'light') {
+            element.classList.remove('dark');
+          } else {
+            element.classList.add('dark');
+          }
+        };
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+          // Only keep dark theme if user explicitly chose it while system was light
+          const savedTheme = localStorage?.getItem("theme");
+          if (savedTheme === 'dark' && !e.matches) {
+            // Keep dark theme if user explicitly chose it while system was light
+            document.documentElement.classList.add('dark');
+          } else {
+            // In all other cases, follow system preference
+            localStorage.removeItem("theme");
+            if (e.matches) {
+              document.documentElement.classList.add('dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+            }
+          }
+        });
+
+        // Apply theme before page preparation
         document.addEventListener('astro:before-preparation', (event) => {
+          // Restore the `show--consent` class if it was present before the page swap
           const htmlClassName = window.document.documentElement.className;
           const consentClassPresent = htmlClassName.includes('show--consent') ? true : false;
           window._showConsentClass = consentClassPresent;
         });
-  
+
         document.addEventListener('astro:before-swap', (event) => {
+          // Apply theme to the new document
+          applyTheme(event.newDocument.documentElement);
+          
+          // Restore consent class
           const showConsent = window._showConsentClass ? ` show--consent` : '';
           event.newDocument.documentElement.className += showConsent;
         });
+
+        // Handle theme toggle
+        const handleThemeToggle = () => {
+          const element = document.documentElement;
+          const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          
+          element.classList.toggle("dark");
+          const isDark = element.classList.contains("dark");
+
+          // Only save preference if user chose dark while system is light
+          if (isDark && !isSystemDark) {
+            localStorage.setItem("theme", "dark");
+          } else {
+            localStorage.removeItem("theme");
+          }
+        }
+
+        // Add event listener on initial load and after each page transition
+        document.addEventListener('astro:page-load', () => {
+          const themeToggle = document.getElementById("themeToggle");
+          themeToggle?.addEventListener("click", handleThemeToggle);
+        });
+
+        // Initial theme application
+        applyTheme(document.documentElement);
+        // Only save initial theme if it's dark while system is light
+        const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (!isSystemDark && getTheme() === 'dark') {
+          localStorage.setItem('theme', 'dark');
+        }
       </script>
     </div>
-    <script>
-      // Check for user preference
-      if (localStorage.getItem('darkMode') === null) {
-        // Check system preference
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          localStorage.setItem('darkMode', 'true');
-          document.documentElement.classList.add('dark');
-        } else {
-          localStorage.setItem('darkMode', 'false');
-        }
-      }
-
-      // Handle page transitions
-      document.addEventListener('astro:page-load', () => {
-        // This runs on initial page load and after each navigation
-        const pageWrapper = document.getElementById('page-wrapper');
-        if (pageWrapper) {
-          pageWrapper.classList.add('page-loaded');
-        }
-      });
-
-      document.addEventListener('astro:before-swap', () => {
-        // This runs before the new page content is swapped in
-        const pageWrapper = document.getElementById('page-wrapper');
-        if (pageWrapper) {
-          pageWrapper.classList.remove('page-loaded');
-        }
-      });
-    </script>
-    <script src="../scripts/transitions.js"></script>
   </body>
 </html>
