@@ -36,9 +36,7 @@ const { class: className, delay = 0, direction = 'left' } = Astro.props;
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      console.log(entry);
       if (entry.isIntersecting) {
-        console.log('visible');
         entry.target.classList.add('visible');
         observer.unobserve(entry.target);
       }

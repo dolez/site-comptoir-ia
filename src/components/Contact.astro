@@ -5,7 +5,7 @@
     <div class="grid md:grid-cols-2 gap-24">
       <div class="slide-up">
         <span class="inline-block px-4 py-1 rounded-full bg-secondary-100 dark:bg-secondary-900 text-secondary-600 dark:text-secondary-300 font-medium text-sm mb-4">
-          Contactez-nous
+          Contactez-moi
         </span>
         <h2 class="mb-6 text-gray-900 dark:text-white">Je serais ravis de vous répondre</h2>
         <p class="text-gray-600 dark:text-gray-300 mb-8">
@@ -70,10 +70,14 @@
       </div>
       
       <div class="slide-up" style="animation-delay: 150ms">
-        <div class="card p-6 border border-gray-200 dark:border-gray-700">
-          <h3 class="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Envoyez-nous un message</h3>
+        <div class="card p-6 border border-gray-200 dark:border-gray-700" x-data="{ submitted: false }">
+          <h3 class="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Envoyez-moi un message</h3>
           
-          <form name="contact" netlify>
+          <form 
+            name="contact" 
+            data-netlify="true"
+            @submit.prevent="submitted = true"
+          >
             <div class="mb-4">
               <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom</label>
               <input 
@@ -124,7 +128,7 @@
             </svg>
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Message envoyé !</h3>
             <p class="text-gray-600 dark:text-gray-300">
-              Merci de nous avoir contactés. Nous vous répondrons dans les plus brefs délais.
+              Merci de m'avoir contacté. Je vous répondrai dans les plus brefs délais.
             </p>
           </div>
         </div>
