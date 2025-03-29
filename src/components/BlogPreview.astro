@@ -1,21 +1,8 @@
 ---
-const articles = [
-  {
-    title: "L'IA française en 2025 : état des lieux et perspectives",
-    description: "Un tour d'horizon des avancées des acteurs français et européens de l'IA et comment ils se positionnent face aux géants mondiaux.",
-    slug: "ia-francaise-2025"
-  },
-  {
-    title: "Comment j'ai multiplié par 3 mon taux de réponse en prospection",
-    description: "Mon retour d'expérience concret sur l'utilisation de la première version de Prospector dans ma stratégie commerciale.",
-    slug: "retour-experience-prospector"
-  },
-  {
-    title: "Développer Prospector : les défis techniques et éthiques",
-    description: "Journal de bord du développement, choix technologiques et considérations éthiques pour un outil de prospection respectueux.",
-    slug: "defis-developpement-prospector"
-  }
-];
+import { getCollection } from 'astro:content';
+import BlogCard from './BlogCard.astro';
+import SlideUp from './SlideUp.astro';
+const articles = await getCollection('blog').then(posts => posts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()).slice(0, 3));
 ---
 
 <section class="section bg-gray-50 dark:bg-gray-800/50">
@@ -26,22 +13,9 @@ const articles = [
     
     <div class="grid md:grid-cols-3 gap-8 mb-12">
       {articles.map((article, index) => (
-        <div class="slide-up" style={`animation-delay: ${index * 150}ms`}>
-          <article class="card p-6 h-full border border-gray-200 dark:border-gray-700">
-            <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-              <a href={`/blog/${article.slug}`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                {article.title}
-              </a>
-            </h3>
-            <p class="text-gray-600 dark:text-gray-300 mb-6">{article.description}</p>
-            <a href={`/blog/${article.slug}`} class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:underline">
-              Lire l'article
-              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-              </svg>
-            </a>
-          </article>
-        </div>
+        <SlideUp delay={index * 150}>
+          <BlogCard post={article} />
+        </SlideUp>
       ))}
     </div>
     

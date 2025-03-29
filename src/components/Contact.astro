@@ -77,6 +77,7 @@
             name="contact" 
             data-netlify="true"
             @submit.prevent="submitted = true"
+            x-show="!submitted"
           >
             <div class="mb-4">
               <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom</label>
@@ -128,7 +129,7 @@
             </svg>
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Message envoyé !</h3>
             <p class="text-gray-600 dark:text-gray-300">
-              Merci de m'avoir contacté. Je vous répondrai dans les plus brefs délais.
+              Merci de m'avoir contacté.<br/>Je vous répondrai dans les plus brefs délais.
             </p>
           </div>
         </div>
